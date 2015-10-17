@@ -54,9 +54,8 @@
     (mapconcat 'identity (cons python-python-command python-python-command-args) " ")))
 
 (defun django-manage-get-commands ()
-
-  (let ((help-output (shell-command-to-string (concat python-shell-interpreter" manage.py -h")))
-        (default-directory (django-manage-root)))
+  (let ((help-output
+          (shell-command-to-string (concat python-shell-interpreter " " (django-manage-root) "manage.py -h"))))
     (setq dj-commands-str
           (with-temp-buffer
             (progn
@@ -80,7 +79,8 @@
   (interactive (list (completing-read "Command: " (django-manage-get-commands) nil nil)))
   ;; Now ask to edit the command. How to do the two actions at once ?
   (setq command (read-shell-command "Run command like this: " command))
-  (compile (concat (django-manage-python-command) " " (django-manage-root) "manage.py " command)))
+  (compile (concat (django-manage-python-command) " "
+                   (shell-quote-argument (django-manage-root)) "manage.py " command)))
 
 (defun django-manage-makemigrations (&optional app-name)
   (interactive "sName: ")
@@ -122,12 +122,14 @@
 
 (defun django-manage--prep-shell (pref-shell)
   (if (eq 'term django-manage-shell-preference)
-      (term (concat (django-manage-python-command) " " (django-manage-root) "manage.py " pref-shell)))
+      (term (concat (django-manage-python-command) " "
+                    (shell-quote-argument (django-manage-root)) "manage.py " pref-shell)))
   (if (eq 'eshell django-manage-shell-preference)
       (progn
         (unless (get-buffer eshell-buffer-name)
           (eshell))
-        (insert (concat (django-manage-python-command) " " (django-manage-root) "manage.py " pref-shell))
+        (insert (concat (django-manage-python-command) " "
+                        (shell-quote-argument (django-manage-root)) "manage.py " pref-shell))
         (eshell-send-input)))
   (if (eq 'pyshell django-manage-shell-preference)
       (let ((setup-code "os.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"%s.settings\")")
