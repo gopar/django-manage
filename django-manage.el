@@ -61,7 +61,8 @@
 (defun django-manage-get-commands ()
   "Return list of django commands."
   (let ((help-output
-          (shell-command-to-string (concat python-shell-interpreter " " (django-manage-root) "manage.py -h"))))
+         (shell-command-to-string (concat python-shell-interpreter " "
+                                          (shell-quote-argument (django-manage-root)) "manage.py -h"))))
     (setq dj-commands-str
           (with-temp-buffer
             (progn
@@ -159,8 +160,7 @@ Argument PREF-SHELL users shell of choice"
       (let ((setup-code "os.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"%s.settings\")")
             (parent-dir (file-name-base (substring (django-manage-root) 0 -1)))
             (cmd ";from django.core.management import execute_from_command_line")
-            (exe (format ";execute_from_command_line(['manage.py', '%s'])" pref-shell))
-            (default-directory (django-manage-root)))
+            (exe (format ";execute_from_command_line(['manage.py', '%s'])" pref-shell)))
         (python-shell-send-string (concat (format setup-code parent-dir) cmd exe))
         (switch-to-buffer (python-shell-get-buffer))))
   (rename-buffer (if (string= pref-shell "shell") "*Django Shell*" "*Django DBshell*")))
