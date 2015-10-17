@@ -234,7 +234,7 @@ _q_: Cancel
   (when (and (stringp buffer-file-name)
              ;; (string-match django-files-regexp buffer-file-name)
              (locate-dominating-file default-directory "manage.py"))
-    (django-manage-command)))
+    (django-manage)))
 
 ;;;###autoload
 (define-minor-mode django-manage
