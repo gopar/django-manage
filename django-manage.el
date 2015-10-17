@@ -229,10 +229,9 @@ _q_: Cancel
         (define-key map (kbd "C-c C-x") 'django-manage-hydra/body)
         map))
 
-(defun setup-django-manage-mode ()
+(defun django-manage-setup ()
   "Determine whether to start minor mode or not."
   (when (and (stringp buffer-file-name)
-             ;; (string-match django-files-regexp buffer-file-name)
              (locate-dominating-file default-directory "manage.py"))
     (django-manage)))
 
