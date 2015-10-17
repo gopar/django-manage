@@ -44,15 +44,8 @@
   ;; Check if projectile is in use, and if it is. Return root directory
   (if (fboundp 'projectile-project-root)
       (projectile-project-root)
-    ;; Copied from Rinari and modified accordingly.
-    (or dir (setq dir default-directory))
-    (if (and (file-exists-p (expand-file-name "settings.py" dir))
-             (file-exists-p (expand-file-name "manage.py" dir)))
-        dir
-      (let ((new-dir (expand-file-name (file-name-as-directory "..") dir)))
-        ;; regexp to match windows roots, tramp roots, or regular posix roots
-        (unless (string-match "\\(^[[:alpha:]]:/$\\|^/[^\/]+:\\|^/$\\)" dir)
-          (django-manage-root new-dir))))))
+    ;; Try looking for the directory holding 'manage.py'
+    (locate-dominating-file default-directory "manage.py")))
 
 (defun django-manage-python-command ()
   (if (boundp 'python-shell-interpreter)
@@ -208,7 +201,8 @@ _q_: Cancel
 (defun setup-django-manage-mode ()
   "Determine whether to start minor mode or not"
   (when (and (stringp buffer-file-name)
-             (string-match django-files-regexp buffer-file-name))
+             ;; (string-match django-files-regexp buffer-file-name)
+             (locate-dominating-file default-directory "manage.py"))
     (django-manage)))
 
 ;;;###autoload
