@@ -25,7 +25,7 @@
 ;;; Commentary:
 ;;
 ;; Simple package to be to be able to control `manage.py', the standard
-;; file that every Django project comes with. You are able to call any
+;; file that every Django project comes with.  You are able to call any
 ;; command with `django-manage-command' plus it comes with code
 ;; completion so third party plugins will also be completed.
 
@@ -38,13 +38,13 @@
 (require 'hydra)
 
 (defcustom django-manage-shell-preference 'pyshell
-  "What shell to use"
+  "What shell to use."
   :type 'symbol
   :options '(eshell term pyshell)
   :group 'shell)
 
-(defun django-manage-root (&optional dir home)
-  "Return the root directory of Django project"
+(defun django-manage-root ()
+  "Return the root directory of Django project."
   ;; Check if projectile is in use, and if it is. Return root directory
   (if (fboundp 'projectile-project-root)
       (projectile-project-root)
@@ -52,12 +52,14 @@
     (locate-dominating-file default-directory "manage.py")))
 
 (defun django-manage-python-command ()
+  "Return Python version to use with args."
   (if (boundp 'python-shell-interpreter)
       (concat python-shell-interpreter " " python-shell-interpreter-args)
     ;; For old python.el
     (mapconcat 'identity (cons python-python-command python-python-command-args) " ")))
 
 (defun django-manage-get-commands ()
+  "Return list of django commands."
   (let ((help-output
           (shell-command-to-string (concat python-shell-interpreter " " (django-manage-root) "manage.py -h"))))
     (setq dj-commands-str
@@ -79,6 +81,8 @@
     (sort dj-commands-str 'string-lessp)))
 
 (defun django-manage-command (command)
+  "Allow to run any `manage.py' command.
+Argument COMMAND command for django to run."
   ;; nil nil: enable user to exit with any command. Still, he can not edit a completed choice.
   (interactive (list (completing-read "Command: " (django-manage-get-commands) nil nil)))
   ;; Now ask to edit the command. How to do the two actions at once ?
@@ -87,44 +91,60 @@
                    (shell-quote-argument (django-manage-root)) "manage.py " command)))
 
 (defun django-manage-makemigrations (&optional app-name)
+  "Run command.  To pass arguments call `django-manage-command'.
+Optional argument APP-NAME name of django app create migrations."
   (interactive "sName: ")
   (django-manage-command (concat "makemigrations " app-name)))
 
 (defun django-manage-flush ()
+  "Run command.  To pass arguments call `django-manage-command'."
   (interactive)
   (django-manage-command "flush --noinput"))
 
 (defun django-manage-runserver ()
+  "Start the development server.
+If you want to pass arguments
+such as what port or address, then call `django-manage-command'"
   (interactive)
   (django-manage-command "runserver")
   (switch-to-buffer "*compilation*")
   (rename-buffer "*runserver*"))
 
 (defun django-manage-migrate ()
+  "Run command.  To pass arguments call `django-manage-command'."
   (interactive)
   (django-manage-command "migrate"))
 
 (defun django-manage-assets-rebuild ()
+  "Run command.  To pass arguments call `django-manage-command'."
   (interactive)
   (django-manage-command "assets rebuild"))
 
 (defun django-manage-startapp (name)
+  "Run command.  To pass arguments call `django-manage-command'.
+Argument NAME name of app to create."
   (interactive "sName:")
   (django-manage-command (concat "startapp " name)))
 
 (defun django-manage-makemessages ()
+  "Run command.  To pass arguments call `django-manage-command'."
   (interactive)
   (django-manage-command "makemessages --all --symlinks"))
 
 (defun django-manage-compilemessages ()
+  "Run command.  To pass arguments call `django-manage-command'."
   (interactive)
   (django-manage-command "compilemessages"))
 
 (defun django-manage-test (name)
+  "Run command.  To pass arguments call `django-manage-command'.
+Argument NAME name of django app to test."
   (interactive "sTest app:")
   (django-manage-command (concat "test " name)))
 
 (defun django-manage--prep-shell (pref-shell)
+  "Prepare the shell with users preference.
+Argument PREF-SHELL users shell of choice"
   (if (eq 'term django-manage-shell-preference)
       (term (concat (django-manage-python-command) " "
                     (shell-quote-argument (django-manage-root)) "manage.py " pref-shell)))
@@ -146,14 +166,19 @@
   (rename-buffer (if (string= pref-shell "shell") "*Django Shell*" "*Django DBshell*")))
 
 (defun django-manage-shell ()
+  "Start Python shell with Django already configured."
   (interactive)
   (django-manage--prep-shell "shell"))
 
 (defun django-manage-dbshell ()
+  "Start Database shell."
   (interactive)
   (django-manage--prep-shell "dbshell"))
 
 (defun django-manage-insert-transpy (from to &optional buffer)
+  "Wraps highlighted region in _(...) for i18n.
+Argument FROM start point TO wrap.
+Optional argument BUFFER end point to wrap."
   ;; From http://garage.pimentech.net/libcommonDjango_django_emacs/
   ;; Modified a little
   (interactive "*r")
@@ -205,7 +230,7 @@ _q_: Cancel
         map))
 
 (defun setup-django-manage-mode ()
-  "Determine whether to start minor mode or not"
+  "Determine whether to start minor mode or not."
   (when (and (stringp buffer-file-name)
              ;; (string-match django-files-regexp buffer-file-name)
              (locate-dominating-file default-directory "manage.py"))
@@ -237,4 +262,5 @@ _q_: Cancel
 (easy-menu-add django-manage-menu django-manage-map)
 
 (provide 'django-manage)
-;; django-manage.el ends here
+
+;;; django-manage.el ends here
