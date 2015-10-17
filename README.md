@@ -21,8 +21,11 @@ Influenced by [Django-mode](https://github.com/myfreeweb/django-mode)
 To have package automatically turned on when you go to a Django project. Add the following hook. Otherwise, to call it manually, just run `django-manage`.
 
 ```lisp
-(add-hook 'python-mode-hook 'setup-django-manage-mode)
+(add-hook 'python-mode-hook django-manage-setup)
 ```
+
+You can also add a hook to your Html/Js/Css files if you want to be able to run
+one of the commands such as `runserver`.
 
 ## Features
 - Ability to control `manage.py`, no need to switch to a shell to run commands.
