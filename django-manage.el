@@ -161,7 +161,7 @@
       (insert ")")
       (point-max))))
 
-(defhydra hydra-django-manage (:color blue
+(defhydra django-manage-hydra (:color blue
                                       :hint nil)
   "
                     Manage.py
@@ -195,7 +195,7 @@ _q_: Cancel
 
 (defvar django-manage-map
       (let ((map (make-keymap)))
-        (define-key map (kbd "C-c C-x") 'hydra-django-manage/body)
+        (define-key map (kbd "C-c C-x") 'django-manage-hydra/body)
         map))
 
 (defun setup-django-manage-mode ()
