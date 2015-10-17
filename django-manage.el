@@ -22,6 +22,13 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
 
+;;; Commentary:
+;;
+;; Simple package to be to be able to control `manage.py', the standard
+;; file that every Django project comes with. You are able to call any
+;; command with `django-manage-command' plus it comes with code
+;; completion so third party plugins will also be completed.
+
 ;;; Code:
 
 (condition-case nil
@@ -29,9 +36,6 @@
   (error
    (require 'python-mode)))
 (require 'hydra)
-
-(defvar django-files-regexp
-  "\\<\\(models\\|views\\|handlers\\|feeds\\|sitemaps\\|admin\\|context_processors\\|urls\\|settings\\|tests\\|assets\\|forms\\)\\.py\\'")
 
 (defcustom django-manage-shell-preference 'pyshell
   "What shell to use"
