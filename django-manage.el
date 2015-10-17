@@ -1,4 +1,4 @@
-;;; django-manage-mode.el --- Django minor mode for commanding manage.py
+;;; django-manage.el --- Django minor mode for commanding manage.py
 
 ;; Copyright (C) 2015 Daniel Gopar
 
@@ -200,7 +200,7 @@ _q_: Cancel
   ("i"  django-manage-insert-transpy)
   ("q"  nil "cancel"))
 
-(defvar django-manage-mode-map
+(defvar django-manage-map
       (let ((map (make-keymap)))
         (define-key map (kbd "C-c C-x") 'hydra-django-manage/body)
         map))
@@ -209,18 +209,18 @@ _q_: Cancel
   "Determine whether to start minor mode or not"
   (when (and (stringp buffer-file-name)
              (string-match django-files-regexp buffer-file-name))
-    (django-manage-mode)))
+    (django-manage)))
 
 ;;;###autoload
-(define-minor-mode django-manage-mode
+(define-minor-mode django-manage
   "Minor mode for handling Django's manage.py"
   :lighter " Manage"
-  :keymap django-manage-mode-map)
+  :keymap django-manage-map)
 
 ;;;###autoload
 (add-hook 'python-mode-hook 'setup-django-manage-mode)
 
-(easy-menu-define django-manage-menu django-manage-mode-map "Django menu"
+(easy-menu-define django-manage-menu django-manage-map "Django menu"
   '("Django"
     ["Start an app" django-manage-startapp t]
     ["Run tests" django-manage-test t]
@@ -237,7 +237,7 @@ _q_: Cancel
     "-"
     ["Insert translation mark" django-manage-insert-transpy t]))
 
-(easy-menu-add django-manage-menu django-manage-mode-map)
+(easy-menu-add django-manage-menu django-manage-map)
 
-(provide 'django-manage-mode)
-;; django-manage-mode.el ends here
+(provide 'django-manage)
+;; django-manage.el ends here
