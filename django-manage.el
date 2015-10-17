@@ -75,7 +75,7 @@
     (setq dj-commands-str (mapcar (lambda (x) (s-trim x)) dj-commands-str))
     (sort dj-commands-str 'string-lessp)))
 
-(defun django-manage (command)
+(defun django-manage-command (command)
   ;; nil nil: enable user to exit with any command. Still, he can not edit a completed choice.
   (interactive (list (completing-read "Command: " (django-manage-get-commands) nil nil)))
   ;; Now ask to edit the command. How to do the two actions at once ?
@@ -84,41 +84,41 @@
 
 (defun django-manage-makemigrations (&optional app-name)
   (interactive "sName: ")
-  (django-manage (concat "makemigrations " app-name)))
+  (django-manage-command (concat "makemigrations " app-name)))
 
 (defun django-manage-flush ()
   (interactive)
-  (django-manage "flush --noinput"))
+  (django-manage-command "flush --noinput"))
 
 (defun django-manage-runserver ()
   (interactive)
-  (django-manage "runserver")
+  (django-manage-command "runserver")
   (switch-to-buffer "*compilation*")
   (rename-buffer "*runserver*"))
 
 (defun django-manage-migrate ()
   (interactive)
-  (django-manage "migrate"))
+  (django-manage-command "migrate"))
 
 (defun django-manage-assets-rebuild ()
   (interactive)
-  (django-manage "assets rebuild"))
+  (django-manage-command "assets rebuild"))
 
 (defun django-manage-startapp (name)
   (interactive "sName:")
-  (django-manage (concat "startapp " name)))
+  (django-manage-command (concat "startapp " name)))
 
 (defun django-manage-makemessages ()
   (interactive)
-  (django-manage "makemessages --all --symlinks"))
+  (django-manage-command "makemessages --all --symlinks"))
 
 (defun django-manage-compilemessages ()
   (interactive)
-  (django-manage "compilemessages"))
+  (django-manage-command "compilemessages"))
 
 (defun django-manage-test (name)
   (interactive "sTest app:")
-  (django-manage (concat "test " name)))
+  (django-manage-command (concat "test " name)))
 
 (defun django-manage--prep-shell (pref-shell)
   (if (eq 'term django-manage-shell-preference)
@@ -136,7 +136,7 @@
             (exe (format ";execute_from_command_line(['manage.py', '%s'])" pref-shell))
             (default-directory (django-manage-root)))
         (python-shell-send-string (concat (format setup-code parent-dir) cmd exe))
-        (switch-to-buffer "*Python*")))
+        (switch-to-buffer (python-shell-get-buffer))))
   (rename-buffer (if (string= pref-shell "shell") "*Django Shell*" "*Django DBshell*")))
 
 (defun django-manage-shell ()
@@ -175,7 +175,7 @@ _me_: Make messages              _sd_: Run DB Shell   _c_: Compile messages
 _q_: Cancel
 
 "
-  ("mm" django-manage)
+  ("mm" django-manage-command)
   ("ma" django-manage-makemigrations)
   ("mg" django-manage-migrate)
   ("me" django-manage-makemessages)
@@ -203,7 +203,7 @@ _q_: Cancel
   (when (and (stringp buffer-file-name)
              ;; (string-match django-files-regexp buffer-file-name)
              (locate-dominating-file default-directory "manage.py"))
-    (django-manage)))
+    (django-manage-command)))
 
 ;;;###autoload
 (define-minor-mode django-manage
@@ -224,7 +224,7 @@ _q_: Cancel
     ["Compile translations" django-manage-compilemessages t]
     ["Open Python shell" django-manage-shell t]
     ["Open database shell" django-manage-dbshell t]
-    ["Run other command" django-manage t]
+    ["Run other command" django-manage-command t]
     "-"
     ["Insert translation mark" django-manage-insert-transpy t]))
 
