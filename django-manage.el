@@ -54,9 +54,9 @@
     (mapconcat 'identity (cons python-python-command python-python-command-args) " ")))
 
 (defun django-manage-get-commands ()
-  (cd-absolute (django-manage-root))
 
-  (let ((help-output (shell-command-to-string (concat python-shell-interpreter" manage.py -h"))))
+  (let ((help-output (shell-command-to-string (concat python-shell-interpreter" manage.py -h")))
+        (default-directory (django-manage-root)))
     (setq dj-commands-str
           (with-temp-buffer
             (progn
