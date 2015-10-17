@@ -16,6 +16,14 @@ Influenced by [Django-mode](https://github.com/myfreeweb/django-mode)
 (load "django-manage-mode")
 ```
 
+## Setup
+
+To have package automatically turned on when you go to a Django project. Add the following hook. Otherwise, to call it manually, just run `django-manage`.
+
+```lisp
+(add-hook 'python-mode-hook 'setup-django-manage-mode)
+```
+
 ## Features
 - Ability to control `manage.py`, no need to switch to a shell to run commands.
 - Command completion is available when running `C-c C-x mm`

@@ -217,9 +217,6 @@ _q_: Cancel
   :lighter " Manage"
   :keymap django-manage-map)
 
-;;;###autoload
-(add-hook 'python-mode-hook 'setup-django-manage-mode)
-
 (easy-menu-define django-manage-menu django-manage-map "Django menu"
   '("Django"
     ["Start an app" django-manage-startapp t]
