@@ -1,6 +1,6 @@
-# Django manage mode
+# Django Manage
 
-Django minor mode for commanding manage.py
+Django minor mode for commanding `manage.py`
 
 ## Note
 
@@ -8,12 +8,10 @@ Influenced by [Django-mode](https://github.com/myfreeweb/django-mode)
 
 ## How to install
 
-1. Clone this repo in your computer
-2. Add something like this to your Emacs config:
+You can install it through Melpa:
 
-```lisp
-(add-to-list 'load-path "/path/to/django-manage-mode/")
-(load "django-manage-mode")
+```
+package-install RET django-manage RET
 ```
 
 ## Setup
@@ -21,7 +19,7 @@ Influenced by [Django-mode](https://github.com/myfreeweb/django-mode)
 To have package automatically turned on when you go to a Django project. Add the following hook. Otherwise, to call it manually, just run `django-manage`.
 
 ```lisp
-(add-hook 'python-mode-hook django-manage-setup)
+(add-hook 'python-mode-hook 'django-manage-setup)
 ```
 
 You can also add a hook to your Html/Js/Css files if you want to be able to run

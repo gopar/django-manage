@@ -146,25 +146,33 @@ Argument NAME name of django app to test."
 (defun django-manage--prep-shell (pref-shell)
   "Prepare the shell with users preference.
 Argument PREF-SHELL users shell of choice"
-  (if (eq 'term django-manage-shell-preference)
-      (term (concat (django-manage-python-command) " "
-                    (shell-quote-argument (django-manage-root)) "manage.py " pref-shell)))
-  (if (eq 'eshell django-manage-shell-preference)
-      (progn
-        (unless (get-buffer eshell-buffer-name)
-          (eshell))
-        (insert (concat (django-manage-python-command) " "
-                        (shell-quote-argument (django-manage-root)) "manage.py " pref-shell))
-        (eshell-send-input)))
-  (if (eq 'pyshell django-manage-shell-preference)
-      (let ((setup-code "os.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"%s.settings\")")
-            (parent-dir (file-name-base (substring (django-manage-root) 0 -1)))
-            (cmd ";from django.core.management import execute_from_command_line")
-            (exe (format ";execute_from_command_line(['manage.py', '%s'])" pref-shell))
-            (default-directory (django-manage-root)))
-        (python-shell-send-string (concat (format setup-code parent-dir) cmd exe))
-        (switch-to-buffer (python-shell-get-buffer))))
-  (rename-buffer (if (string= pref-shell "shell") "*Django Shell*" "*Django DBshell*")))
+  ;; If a preexisting shell buffer exists return that one. If not create it
+  (let* ((parent-dir (file-name-base (substring (django-manage-root) 0 -1)))
+         (default-directory (django-manage-root))
+         (buffer-shell-name
+          (format (if (string= pref-shell "shell") "*Django Shell[%s]*" "*Django DBshell[%s]*") parent-dir)))
+    ;; If it exists return it
+    (if (get-buffer buffer-shell-name)
+        (switch-to-buffer buffer-shell-name)
+      ;; Shell didn't exist, so let's create it
+      (if (eq 'term django-manage-shell-preference)
+          (term (concat (django-manage-python-command) " "
+                        (shell-quote-argument (django-manage-root)) "manage.py " pref-shell)))
+      (if (eq 'eshell django-manage-shell-preference)
+          (progn
+            (unless (get-buffer eshell-buffer-name)
+              (eshell))
+            (insert (concat (django-manage-python-command) " "
+                            (shell-quote-argument (django-manage-root)) "manage.py " pref-shell))
+            (eshell-send-input)))
+      (if (eq 'pyshell django-manage-shell-preference)
+          (let ((setup-code "os.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"%s.settings\")")
+                (cmd ";from django.core.management import execute_from_command_line")
+                (exe (format ";execute_from_command_line(['manage.py', '%s'])" pref-shell)))
+            (run-python (python-shell-parse-command))
+            (python-shell-send-string (concat (format setup-code parent-dir) cmd exe))
+            (switch-to-buffer (python-shell-get-buffer))))
+      (rename-buffer buffer-shell-name))))
 
 (defun django-manage-shell ()
   "Start Python shell with Django already configured."
