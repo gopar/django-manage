@@ -43,6 +43,16 @@
   :options '(eshell term pyshell)
   :group 'shell)
 
+(defcustom django-manage-server-ipaddr "127.0.0.1"
+  "What address Django will use when running the dev server"
+  :type 'string
+  :group 'server)
+
+(defcustom django-manage-server-port "8000"
+  "What port Django will use when running the dev server"
+  :type 'string
+  :group 'server)
+
 (defun django-manage-root ()
   "Return the root directory of Django project."
   ;; Check if projectile is in use, and if it is. Return root directory
@@ -108,7 +118,9 @@ If you want to pass arguments
 such as what port or address, then call `django-manage-command'"
   (interactive)
   (let ((parent-dir (file-name-base (substring (django-manage-root) 0 -1))))
-      (django-manage-command "runserver")
+      (compile (concat (django-manage-python-command) " "
+                   (shell-quote-argument (django-manage-root)) "manage.py runserver "
+                   django-manage-server-ipaddr ":" django-manage-server-port))
       (with-current-buffer "*compilation*"
         (rename-buffer (format "*runserver[%s]*" parent-dir)))))
 
