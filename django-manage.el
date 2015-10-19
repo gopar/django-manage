@@ -107,9 +107,10 @@ Optional argument APP-NAME name of django app create migrations."
 If you want to pass arguments
 such as what port or address, then call `django-manage-command'"
   (interactive)
-  (django-manage-command "runserver")
-  (switch-to-buffer "*compilation*")
-  (rename-buffer "*runserver*"))
+  (let ((parent-dir (file-name-base (substring (django-manage-root) 0 -1))))
+      (django-manage-command "runserver")
+      (with-current-buffer "*compilation*"
+        (rename-buffer (format "*runserver[%s]*" parent-dir)))))
 
 (defun django-manage-migrate ()
   "Run command.  To pass arguments call `django-manage-command'."
