@@ -44,12 +44,12 @@
   :group 'shell)
 
 (defcustom django-manage-server-ipaddr "127.0.0.1"
-  "What address Django will use when running the dev server"
+  "What address Django will use when running the dev server."
   :type 'string
   :group 'server)
 
 (defcustom django-manage-server-port "8000"
-  "What port Django will use when running the dev server"
+  "What port Django will use when running the dev server."
   :type 'string
   :group 'server)
 
@@ -91,31 +91,35 @@
     (setq dj-commands-str (mapcar (lambda (x) (s-trim x)) dj-commands-str))
     (sort dj-commands-str 'string-lessp)))
 
-(defun django-manage-command (command)
+(defun django-manage-command (command &optional no-prompt)
   "Allow to run any `manage.py' command.
-Argument COMMAND command for django to run."
+Argument COMMAND command for django to run.
+Optional Argument NO-PROMPT if non-nil will *not* ask if you wish to pass extra arguments."
   ;; nil nil: enable user to exit with any command. Still, he can not edit a completed choice.
   (interactive (list (completing-read "Command: " (django-manage-get-commands) nil nil)))
-  ;; Now ask to edit the command. How to do the two actions at once ?
-  (setq command (read-shell-command "Run command like this: " command))
+  (if (not no-prompt)
+      ;; Now ask to edit the command. How to do the two actions at once ?
+      (setq command (read-shell-command "Run command like this: " command)))
   (compile (concat (django-manage-python-command) " "
                    (shell-quote-argument (django-manage-root)) "manage.py " command)))
 
 (defun django-manage-makemigrations (&optional app-name)
-  "Run command.  To pass arguments call `django-manage-command'.
+  "Run \"makemigrations app-name\", will prompt for \"app-name\".
+You can leave blank to simply run \"makemigrations\".
+To choose arguments call `django-manage-command'.
 Optional argument APP-NAME name of django app create migrations."
   (interactive "sName: ")
-  (django-manage-command (concat "makemigrations " app-name)))
+  (django-manage-command (concat "makemigrations " app-name) t))
 
 (defun django-manage-flush ()
-  "Run command.  To pass arguments call `django-manage-command'."
+  "Run \"flush --noinput\". To choose arguments call `django-manage-command'."
   (interactive)
-  (django-manage-command "flush --noinput"))
+  (django-manage-command "flush --noinput" t))
 
 (defun django-manage-runserver ()
-  "Start the development server.
-If you want to pass arguments
-such as what port or address, then call `django-manage-command'"
+  "Start the development server. To change what address and port to use,
+customize `django-manage-server-ipaddr' and `django-manage-server-port'
+If you want to pass arguments, then call `django-manage-command'"
   (interactive)
   (let ((parent-dir (file-name-base (substring (django-manage-root) 0 -1))))
       (compile (concat (django-manage-python-command) " "
@@ -125,36 +129,39 @@ such as what port or address, then call `django-manage-command'"
         (rename-buffer (format "*runserver[%s]*" parent-dir)))))
 
 (defun django-manage-migrate ()
-  "Run command.  To pass arguments call `django-manage-command'."
+  "Run \"migrate\".  To choose arguments call `django-manage-command'."
   (interactive)
-  (django-manage-command "migrate"))
+  (django-manage-command "migrate" t))
 
 (defun django-manage-assets-rebuild ()
-  "Run command.  To pass arguments call `django-manage-command'."
+  "Run \"assets rebuild\".  To choose arguments call `django-manage-command'."
   (interactive)
-  (django-manage-command "assets rebuild"))
+  (django-manage-command "assets rebuild" t))
 
 (defun django-manage-startapp (name)
-  "Run command.  To pass arguments call `django-manage-command'.
+  "Run \"startapp name\".  Will prompt for name of app.
+To choose arguments call `django-manage-command'.
 Argument NAME name of app to create."
   (interactive "sName:")
-  (django-manage-command (concat "startapp " name)))
+  (django-manage-command (concat "startapp " name) t))
 
 (defun django-manage-makemessages ()
-  "Run command.  To pass arguments call `django-manage-command'."
+  "Run \"makemessages --all --symlinks\".
+To pass arguments call `django-manage-command'."
   (interactive)
-  (django-manage-command "makemessages --all --symlinks"))
+  (django-manage-command "makemessages --all --symlinks" t))
 
 (defun django-manage-compilemessages ()
-  "Run command.  To pass arguments call `django-manage-command'."
+  "Run \"compilemessages\".  To pass arguments call `django-manage-command'."
   (interactive)
-  (django-manage-command "compilemessages"))
+  (django-manage-command "compilemessages" t))
 
 (defun django-manage-test (name)
-  "Run command.  To pass arguments call `django-manage-command'.
+  "Run \"test name\".  Will prompt for Django app name to test.
+To pass arguments call `django-manage-command'.
 Argument NAME name of django app to test."
   (interactive "sTest app:")
-  (django-manage-command (concat "test " name)))
+  (django-manage-command (concat "test " name) t))
 
 (defun django-manage--prep-shell (pref-shell)
   "Prepare the shell with users preference.
