@@ -188,7 +188,9 @@ Argument PREF-SHELL users shell of choice"
       (if (eq 'pyshell django-manage-shell-preference)
           (let ((setup-code "os.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"%s.settings\")")
                 (cmd ";from django.core.management import execute_from_command_line")
-                (exe (format ";execute_from_command_line(['manage.py', '%s'])" pref-shell)))
+                (exe (if (string= pref-shell "shell")
+                         ";import django;django.setup()"
+                       (format ";execute_from_command_line(['manage.py', '%s'])" pref-shell))))
             (run-python (python-shell-parse-command))
             (python-shell-send-string (concat (format setup-code parent-dir) cmd exe))
             (switch-to-buffer (python-shell-get-buffer))))
