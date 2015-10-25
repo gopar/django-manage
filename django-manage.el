@@ -53,6 +53,12 @@
   :type 'string
   :group 'server)
 
+(defcustom django-manage-prompt-for-command nil
+  "When non-nil will ask for confirmation on command.
+Will affect every function other than `django-manage-command'."
+  :type 'boolean
+  :group 'django-manage)
+
 (defun django-manage-root ()
   "Return the root directory of Django project."
   ;; Check if projectile is in use, and if it is. Return root directory
@@ -109,12 +115,14 @@ You can leave blank to simply run \"makemigrations\".
 To choose arguments call `django-manage-command'.
 Optional argument APP-NAME name of django app create migrations."
   (interactive "sName: ")
-  (django-manage-command (concat "makemigrations " app-name) t))
+  (django-manage-command (concat "makemigrations " app-name)
+                         (not django-manage-prompt-for-command)))
 
 (defun django-manage-flush ()
   "Run \"flush --noinput\". To choose arguments call `django-manage-command'."
   (interactive)
-  (django-manage-command "flush --noinput" t))
+  (django-manage-command "flush --noinput"
+                         (not django-manage-prompt-for-command)))
 
 (defun django-manage-runserver ()
   "Start the development server. To change what address and port to use,
@@ -131,37 +139,43 @@ If you want to pass arguments, then call `django-manage-command'"
 (defun django-manage-migrate ()
   "Run \"migrate\".  To choose arguments call `django-manage-command'."
   (interactive)
-  (django-manage-command "migrate" t))
+  (django-manage-command "migrate"
+                         (not django-manage-prompt-for-command)))
 
 (defun django-manage-assets-rebuild ()
   "Run \"assets rebuild\".  To choose arguments call `django-manage-command'."
   (interactive)
-  (django-manage-command "assets rebuild" t))
+  (django-manage-command "assets rebuild"
+                         (not django-manage-prompt-for-command)))
 
 (defun django-manage-startapp (name)
   "Run \"startapp name\".  Will prompt for name of app.
 To choose arguments call `django-manage-command'.
 Argument NAME name of app to create."
   (interactive "sName:")
-  (django-manage-command (concat "startapp " name) t))
+  (django-manage-command (concat "startapp " name)
+                         (not django-manage-prompt-for-command)))
 
 (defun django-manage-makemessages ()
   "Run \"makemessages --all --symlinks\".
 To pass arguments call `django-manage-command'."
   (interactive)
-  (django-manage-command "makemessages --all --symlinks" t))
+  (django-manage-command "makemessages --all --symlinks"
+                         (not django-manage-prompt-for-command)))
 
 (defun django-manage-compilemessages ()
   "Run \"compilemessages\".  To pass arguments call `django-manage-command'."
   (interactive)
-  (django-manage-command "compilemessages" t))
+  (django-manage-command "compilemessages"
+                         (not django-manage-prompt-for-command)))
 
 (defun django-manage-test (name)
   "Run \"test name\".  Will prompt for Django app name to test.
 To pass arguments call `django-manage-command'.
 Argument NAME name of django app to test."
   (interactive "sTest app:")
-  (django-manage-command (concat "test " name) t))
+  (django-manage-command (concat "test " name)
+                         (not django-manage-prompt-for-command)))
 
 (defun django-manage--prep-shell (pref-shell)
   "Prepare the shell with users preference.
