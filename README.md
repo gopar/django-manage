@@ -27,6 +27,7 @@ one of the commands such as `runserver`.
 
 ## Features
 - Ability to control `manage.py`, no need to switch to a shell to run commands.
+- Set custom variable `django-manage-root` for directory where `manage.py` lives.
 - Command completion is available when running `C-c C-x mm`
 - [Hydra](https://github.com/abo-abo/hydra) menu showing most commonly used commands. (At least for my setup :P)
 - Select a string you want to translate and press `C-c C-x i` or call `django-insert-transpy`. This works in both Python and templates.

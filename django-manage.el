@@ -53,19 +53,21 @@
   :type 'string
   :group 'server)
 
-(defcustom django-manage-prompt-for-command nil
-  "When non-nil will ask for confirmation on command.
-Will affect every function other than `django-manage-command'."
-  :type 'boolean
+(defcustom django-manage-root ""
+  "The directory where 'manage.py' lives."
+  :type 'string
   :group 'django-manage)
+(make-local-variable 'django-manage-root)
 
 (defun django-manage-root ()
   "Return the root directory of Django project."
   ;; Check if projectile is in use, and if it is. Return root directory
-  (if (fboundp 'projectile-project-root)
-      (projectile-project-root)
-    ;; Try looking for the directory holding 'manage.py'
-    (locate-dominating-file default-directory "manage.py")))
+  (if (not (string= django-manage-root ""))
+      django-manage-root
+    (if (fboundp 'projectile-project-root)
+        (projectile-project-root)
+      ;; Try looking for the directory holding 'manage.py'
+      (locate-dominating-file default-directory "manage.py"))))
 
 (defun django-manage-python-command ()
   "Return Python version to use with args."
