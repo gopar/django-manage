@@ -25,6 +25,16 @@ To have package automatically turned on when you go to a Django project. Add the
 You can also add a hook to your Html/Js/Css files if you want to be able to run
 one of the commands such as `runserver`.
 
+### virtualenv
+
+If you develop in a virtualenv but don’t start Emacs from within, you
+can set the `python-shell-interpreter` variable to the path of the
+`python` binary inside the virtualenv (e.g. `venv/bin/python`.) This
+makes sure all your Python packages get loaded from the virtualenv,
+instead from the globally installed environment. You can do this with
+`M-: (setq python-shell-interpreter "path/to/virtualenv/bin/python")`,
+or using a `.dir-locals.el` file.
+
 ## Features
 - Ability to control `manage.py`, no need to switch to a shell to run commands.
 - Set custom variable `django-manage-root` for directory where `manage.py` lives.
