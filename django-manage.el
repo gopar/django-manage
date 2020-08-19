@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015 Daniel Gopar
 
 ;; Author: Daniel Gopar <gopardaniel@yahoo.com>
-;; Package-Requires: ((hydra "0.13.2"))
+;; Package-Requires: ((hydra "0.13.2") (s "1.12.0") (dash "2.17.0"))
 ;; Version: 0.1
 ;; Keywords: languages
 
@@ -36,6 +36,8 @@
   (error
    (require 'python-mode)))
 (require 'hydra)
+(require 'dash)
+(require 's)
 
 (defcustom django-manage-shell-preference 'pyshell
   "What shell to use."
